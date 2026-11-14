@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="user_roles">
+        <item>ADMIN</item>
+        <item>USER</item>
+    </string-array>
+    <string-array name="account_statuses">
+        <item>ACTIVO</item>
+        <item>INACTIVO</item>
+    </string-array>
+    <string-array name="report_role_filters">
+        <item>@string/report_any</item>
+        <item>ADMIN</item>
+        <item>USER</item>
+    </string-array>
+    <string-array name="report_status_filters">
+        <item>@string/report_any</item>
+        <item>ACTIVO</item>
+        <item>INACTIVO</item>
+    </string-array>
+</resources>

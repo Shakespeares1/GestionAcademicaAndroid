@@ -1,0 +1,14 @@
+package com.gestionacademica.android.data.dto;
+
+import com.google.gson.annotations.SerializedName;
+
+public final class ResetPasswordRequest {
+    @SerializedName("token") public String token;
+    @SerializedName("newPassword") public String newPassword;
+
+    public ResetPasswordRequest() {}
+    public ResetPasswordRequest(String token, String newPassword) {
+        this.token = token;
+        this.newPassword = newPassword;
+    }
+}
