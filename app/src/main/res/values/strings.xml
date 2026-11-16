@@ -13,6 +13,12 @@
     <string name="register_title">Crear cuenta</string>
     <string name="register_subtitle">Regístrate para acceder a Gestión Académica.</string>
     <string name="name_label">Nombre completo</string>
+    <string name="username_label">Nombre de usuario</string>
+    <string name="username_helper">3–30 caracteres: letras, números, punto, guion o guion bajo; sin espacios.</string>
+    <string name="username_required">Ingresa un nombre de usuario.</string>
+    <string name="username_invalid">Usa 3–30 caracteres ASCII. Empieza y termina con letra o número; no incluyas espacios.</string>
+    <string name="username_duplicate">Ese nombre de usuario o correo ya está registrado. Prueba con otro.</string>
+    <string name="username_server_rejected">El servidor rechazó los datos. Revisa el nombre de usuario y los demás campos.</string>
     <string name="confirm_password_label">Confirmar contraseña</string>
     <string name="register_submit">Crear cuenta</string>
     <string name="register_loading">Creando cuenta…</string>
@@ -65,13 +71,13 @@
     <string name="assignment_saving">Guardando…</string>
     <string name="assignment_name">Nombre</string>
     <string name="assignment_full_name">Nombre completo</string>
-    <string name="assignment_description">Descripción</string>
-    <string name="assignment_area">Área de conocimiento</string>
-    <string name="assignment_career">Carrera</string>
+    <string name="assignment_description">Descripción (opcional)</string>
+    <string name="assignment_area">Área de conocimiento (opcional)</string>
+    <string name="assignment_career">Carrera (opcional)</string>
     <string name="assignment_credits">Número de créditos</string>
-    <string name="assignment_content">Contenido temático</string>
+    <string name="assignment_content">Contenido temático (opcional)</string>
     <string name="assignment_semester">Semestre</string>
-    <string name="assignment_professor">Profesor</string>
+    <string name="assignment_professor">Profesor (opcional)</string>
     <string name="assignment_field_required">Completa este campo.</string>
     <string name="assignment_integer_required">Ingresa un número entero válido.</string>
     <string name="assignment_integer_positive">El valor debe ser mayor que cero.</string>
@@ -91,7 +97,7 @@
     <string name="home_assignments_action">Explorar asignaturas</string>
     <string name="users_title">Administrar usuarios</string>
     <string name="users_subtitle">Gestiona los perfiles, roles y estados de cuenta.</string>
-    <string name="users_search_hint">Buscar por nombre o correo</string>
+    <string name="users_search_hint">Buscar por nombre, usuario o correo</string>
     <string name="users_add">Registrar usuario</string>
     <string name="users_retry">Reintentar</string>
     <string name="users_empty">No hay usuarios para mostrar.</string>
@@ -101,6 +107,7 @@
     <string name="users_access">Rol y estado</string>
     <string name="users_delete">Eliminar</string>
     <string name="users_name">Nombre completo</string>
+    <string name="users_username_display">Usuario: %1$s</string>
     <string name="users_password">Contraseña</string>
     <string name="users_save">Guardar usuario</string>
     <string name="users_create_title">Registrar usuario</string>
@@ -110,7 +117,7 @@
     <string name="users_access_dialog_title">Cambiar rol y estado</string>
     <string name="users_access_save">Guardar acceso</string>
     <string name="users_access_summary">Rol: %1$s · Estado: %2$s</string>
-    <string name="users_detail_text">ID: %1$s\nNombre: %2$s\nCorreo: %3$s\nRol: %4$s\nEstado: %5$s\nFecha de registro: %6$s</string>
+    <string name="users_detail_text">ID: %1$s\nUsuario: %2$s\nNombre: %3$s\nCorreo: %4$s\nRol: %5$s\nEstado: %6$s\nFecha de registro: %7$s</string>
     <string name="users_delete_title">Eliminar usuario</string>
     <string name="users_delete_message">¿Quieres eliminar a “%1$s”? Esta acción se enviará al servidor.</string>
     <string name="users_created">Usuario registrado. Rol inicial: USER · Estado: ACTIVO.</string>
@@ -138,10 +145,12 @@
     <string name="report_title_credits">Asignaturas · créditos, profesor y nombre</string>
     <string name="report_title_user_role">Usuarios · rol y estado</string>
     <string name="report_title_user_date">Usuarios · fecha de registro</string>
+    <string name="report_title_user_search">Usuarios · búsqueda por nombre, usuario o correo</string>
     <string name="report_description_career">Carrera exacta; semestre exacto; área parcial. Filtros opcionales.</string>
     <string name="report_description_credits">Créditos inclusivos; profesor y nombre parciales. Filtros opcionales.</string>
     <string name="report_description_user_role">Solo ADMIN. Filtra opcionalmente por rol y estado.</string>
     <string name="report_description_user_date">Solo ADMIN. Fechas ISO inclusivas por día (UTC).</string>
+    <string name="report_description_user_search">Solo ADMIN. Coincidencias parciales por nombre completo, username y correo; los filtros se pueden combinar.</string>
     <string name="report_career">Carrera exacta</string>
     <string name="report_semester">Semestre exacto</string>
     <string name="report_area">Área de conocimiento (parcial)</string>
@@ -149,6 +158,9 @@
     <string name="report_credits_max">Créditos máximos inclusivos</string>
     <string name="report_professor">Profesor (coincidencia parcial)</string>
     <string name="report_assignment_name">Nombre de asignatura (parcial)</string>
+    <string name="report_user_name_filter">Nombre completo (parcial)</string>
+    <string name="report_username_filter">Username (parcial)</string>
+    <string name="report_user_email_filter">Correo electrónico (parcial)</string>
     <string name="report_role">Rol</string>
     <string name="report_account_status">Estado de cuenta</string>
     <string name="report_date_from">Fecha desde (inclusiva)</string>
@@ -175,7 +187,8 @@
     <string name="report_users_admin_only">Los reportes de usuarios requieren ADMIN.</string>
     <string name="report_session_required">Inicia sesión para consultar reportes.</string>
     <string name="report_assignment_result">%1$s\nCarrera: %2$s · Semestre: %3$d\nÁrea: %4$s\nCréditos: %5$d · Profesor: %6$s</string>
-    <string name="report_user_result">%1$s\nCorreo: %2$s\nRol: %3$s · Estado: %4$s\nRegistro: %5$s</string>
+    <string name="report_user_result">%1$s\nUsuario: %2$s · Correo: %3$s\nRol: %4$s · Estado: %5$s\nRegistro: %6$s</string>
+    <string name="report_user_search_result">Usuario: %1$s · Correo: %2$s</string>
     <string name="report_any">Cualquiera</string>
     <string name="home_sensors_action">Sensores del dispositivo</string>
     <string name="sensors_title">Sensores</string>
@@ -201,4 +214,12 @@
     <string name="sensor_unavailable">Este dispositivo no dispone de este sensor.</string>
     <string name="sensor_waiting">Esperando lectura del sensor…</string>
     <string name="sensor_no_reading">Sin lectura: hardware no disponible.</string>
+    <string name="local_network_permission_title">Permiso de red local necesario</string>
+    <string name="local_network_permission_rationale">Para conectarse al servidor local de Gestión Académica, permite el acceso a la red local. El permiso solo se usa para comunicarse con la API configurada; la conexión continúa protegida mediante HTTPS.</string>
+    <string name="local_network_permission_retry">Solicitar permiso</string>
+    <string name="local_network_permission_settings">Abrir ajustes</string>
+    <string name="local_network_permission_close">Cerrar aplicación</string>
+    <string name="local_network_permission_denied">No se concedió el acceso a la red local. La aplicación no enviará solicitudes al servidor hasta que se habilite este permiso.</string>
+    <string name="local_network_permission_settings_return">El permiso sigue desactivado. Puedes habilitarlo en Ajustes de la aplicación; las solicitudes locales permanecerán bloqueadas mientras tanto.</string>
+    <string name="local_network_permission_error">Se requiere el permiso de red local para conectarse al servidor configurado. Habilítalo en los ajustes de la aplicación.</string>
 </resources>

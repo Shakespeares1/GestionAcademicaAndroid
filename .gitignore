@@ -27,6 +27,7 @@ captures/
 *.p12
 *.pfx
 *.pem
+!app/src/debug/res/raw/gestion_academica_dev_ca.pem
 *.key
 secrets.properties
 keystore.properties

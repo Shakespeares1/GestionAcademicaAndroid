@@ -18,6 +18,7 @@ import com.gestionacademica.android.data.dto.AsignaturaDto;
 import com.gestionacademica.android.data.repository.SessionManager;
 import com.gestionacademica.android.domain.Session;
 import com.gestionacademica.android.presentation.auth.LoginActivity;
+import com.gestionacademica.android.utils.RoleAccessPolicy;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
@@ -46,11 +47,12 @@ public final class AsignaturasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         sessionManager = new SessionManager(getApplicationContext());
         Optional<Session> session = sessionManager.getSession();
-        if (!session.isPresent()) {
+        if (!session.isPresent()
+                || !RoleAccessPolicy.canViewAcademicModules(session.get().getRole())) {
             openLogin();
             return;
         }
-        isAdmin = "ADMIN".equals(session.get().getRole());
+        isAdmin = RoleAccessPolicy.isAdmin(session.get().getRole());
         setContentView(R.layout.activity_asignaturas);
 
         searchInput = findViewById(R.id.assignmentsSearch);

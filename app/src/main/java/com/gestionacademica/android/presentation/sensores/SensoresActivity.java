@@ -1,6 +1,7 @@
 package com.gestionacademica.android.presentation.sensores;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,6 +11,10 @@ import android.os.SystemClock;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.gestionacademica.android.R;
+import com.gestionacademica.android.data.repository.SessionManager;
+import com.gestionacademica.android.domain.Session;
+import com.gestionacademica.android.presentation.auth.LoginActivity;
+import com.gestionacademica.android.utils.RoleAccessPolicy;
 import java.util.Locale;
 
 public final class SensoresActivity extends AppCompatActivity implements SensorEventListener {
@@ -40,6 +45,16 @@ public final class SensoresActivity extends AppCompatActivity implements SensorE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        java.util.Optional<Session> session =
+                new SessionManager(getApplicationContext()).getSession();
+        if (!session.isPresent()
+                || !RoleAccessPolicy.canViewAcademicModules(session.get().getRole())) {
+            Intent login = new Intent(this, LoginActivity.class);
+            login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(login);
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_sensores);
 
         accelerometerStatus = findViewById(R.id.accelerometerAvailability);

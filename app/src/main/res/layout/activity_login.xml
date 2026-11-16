@@ -136,6 +136,7 @@
                 android:layout_height="48dp"
                 android:gravity="center"
                 android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:text="@string/register_action"
                 android:textColor="?attr/colorPrimary"
                 android:textStyle="bold" />

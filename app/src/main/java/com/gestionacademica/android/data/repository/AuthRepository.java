@@ -51,7 +51,7 @@ public final class AuthRepository {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (!response.isSuccessful()) {
-                    callback.onError(ApiErrorHandler.fromResponse(response));
+                    callback.onError(ApiErrorHandler.fromLoginResponse(response));
                     return;
                 }
                 LoginResponse body = response.body();
@@ -113,7 +113,7 @@ public final class AuthRepository {
             @Override
             public void onResponse(Call<T> call, Response<T> response) {
                 if (!response.isSuccessful()) {
-                    callback.onError(ApiErrorHandler.fromResponse(response));
+                    callback.onError(ApiErrorHandler.fromResponse(response, call.request().url().encodedPath()));
                     return;
                 }
                 callback.onSuccess(response.body());

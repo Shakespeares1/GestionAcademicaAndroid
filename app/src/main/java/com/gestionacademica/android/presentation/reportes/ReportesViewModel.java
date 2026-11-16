@@ -59,6 +59,13 @@ public final class ReportesViewModel extends AndroidViewModel {
                 callback(ReportType.USERS_REGISTRATION_DATE, generation));
     }
 
+    public void buscarUsuarios(String nombre, String username, String email, int page, int size) {
+        long generation = begin(ReportType.USERS_SEARCH, true);
+        if (generation < 0) return;
+        repository.buscarUsuarios(nombre, username, email, page, size,
+                callback(ReportType.USERS_SEARCH, generation));
+    }
+
     private long begin(ReportType type, boolean adminOnly) {
         long generation = ++requestGeneration;
         ApiError error = authorizationError(adminOnly);

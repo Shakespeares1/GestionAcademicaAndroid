@@ -15,6 +15,7 @@ import com.gestionacademica.android.data.dto.AsignaturaRequest;
 import com.gestionacademica.android.data.repository.SessionManager;
 import com.gestionacademica.android.domain.Session;
 import com.gestionacademica.android.presentation.auth.LoginActivity;
+import com.gestionacademica.android.utils.RoleAccessPolicy;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -49,7 +50,7 @@ public final class AsignaturaFormActivity extends AppCompatActivity {
             openLogin();
             return;
         }
-        if (!"ADMIN".equals(session.get().getRole())) {
+        if (!RoleAccessPolicy.canManageAcademicData(session.get().getRole())) {
             Toast.makeText(this, R.string.assignment_not_admin, Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -154,9 +155,10 @@ public final class AsignaturaFormActivity extends AppCompatActivity {
         boolean valid = true;
         TextInputEditText[] textFields = { nameInput, fullNameInput, descriptionInput, areaInput,
                 careerInput, creditsInput, contentInput, semesterInput, professorInput };
+        boolean[] required = { true, true, false, false, false, true, false, true, false };
         for (int i = 0; i < textFields.length; i++) {
             String value = value(textFields[i]).trim();
-            if (TextUtils.isEmpty(value)) {
+            if (required[i] && TextUtils.isEmpty(value)) {
                 requiredLayouts[i].setError(getString(R.string.assignment_field_required));
                 valid = false;
             }
@@ -170,13 +172,13 @@ public final class AsignaturaFormActivity extends AppCompatActivity {
         AsignaturaRequest request = new AsignaturaRequest();
         request.nombre = value(nameInput).trim();
         request.nombreCompleto = value(fullNameInput).trim();
-        request.descripcion = value(descriptionInput).trim();
-        request.areaConocimiento = value(areaInput).trim();
-        request.carrera = value(careerInput).trim();
+        request.descripcion = optionalValue(descriptionInput);
+        request.areaConocimiento = optionalValue(areaInput);
+        request.carrera = optionalValue(careerInput);
         request.numeroCreditos = credits;
-        request.contenidoTematico = value(contentInput).trim();
+        request.contenidoTematico = optionalValue(contentInput);
         request.semestre = semester;
-        request.profesor = value(professorInput).trim();
+        request.profesor = optionalValue(professorInput);
         saveButton.setEnabled(false);
         if (editing) viewModel.update(assignmentId, request);
         else viewModel.create(request);
@@ -233,5 +235,10 @@ public final class AsignaturaFormActivity extends AppCompatActivity {
 
     private static String value(TextInputEditText input) {
         return input.getText() == null ? "" : input.getText().toString();
+    }
+
+    private static String optionalValue(TextInputEditText input) {
+        String value = value(input).trim();
+        return value.isEmpty() ? null : value;
     }
 }

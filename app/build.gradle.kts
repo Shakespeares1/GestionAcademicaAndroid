@@ -2,9 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
-val configuredApiBaseUrl = providers.gradleProperty("GA_API_BASE_URL")
-val debugApiBaseUrl = configuredApiBaseUrl.orElse("https://10.0.2.2:8443/").get()
-val releaseApiBaseUrl = configuredApiBaseUrl.orElse("").get()
+val debugApiBaseUrl = providers.gradleProperty("GA_API_BASE_URL")
+    .orElse("https://gestion-asignaturas-api.onrender.com/")
+    .get()
+val releaseApiBaseUrl = providers.gradleProperty("GA_RELEASE_API_BASE_URL")
+    .orElse("")
+    .get()
 
 android {
     namespace = "com.gestionacademica.android"

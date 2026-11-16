@@ -18,6 +18,9 @@ public final class BearerTokenInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request original = chain.request();
+        if (isPublicRequest(original)) {
+            return chain.proceed(original.newBuilder().removeHeader("Authorization").build());
+        }
         Optional<Session> session = sessionManager.getSession();
         if (!session.isPresent()) return chain.proceed(original);
         String token = session.get().getAccessToken();
@@ -26,5 +29,13 @@ public final class BearerTokenInterceptor implements Interceptor {
                 .header("Authorization", "Bearer " + token)
                 .build();
         return chain.proceed(authenticated);
+    }
+
+    static boolean isPublicRequest(Request request) {
+        String path = request.url().encodedPath();
+        return "/api/auth/login".equals(path)
+                || "/api/auth/forgot-password".equals(path)
+                || "/api/auth/reset-password".equals(path)
+                || ("POST".equals(request.method()) && "/api/usuarios".equals(path));
     }
 }

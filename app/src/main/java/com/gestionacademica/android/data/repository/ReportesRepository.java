@@ -61,6 +61,12 @@ public final class ReportesRepository {
         execute(service.usuariosPorFechaRegistro(fechaDesde, fechaHasta, page, size), callback);
     }
 
+    public void buscarUsuarios(String nombre, String username, String email, int page, int size,
+            Callback<ReportePageDto<UsuarioDto>> callback) {
+        if (isUnavailable(callback)) return;
+        execute(service.buscarUsuarios(nombre, username, email, page, size), callback);
+    }
+
     private boolean isUnavailable(Callback<?> callback) {
         if (configurationError == null) return false;
         callback.onError(configurationError);

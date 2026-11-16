@@ -12,6 +12,7 @@ import com.gestionacademica.android.presentation.auth.LoginActivity;
 import com.gestionacademica.android.presentation.reportes.ReportesActivity;
 import com.gestionacademica.android.presentation.sensores.SensoresActivity;
 import com.gestionacademica.android.presentation.usuarios.UsuariosActivity;
+import com.gestionacademica.android.utils.RoleAccessPolicy;
 import java.util.Optional;
 
 public final class HomeActivity extends AppCompatActivity {
@@ -26,12 +27,16 @@ public final class HomeActivity extends AppCompatActivity {
             openLogin();
             return;
         }
+        if (!RoleAccessPolicy.canViewAcademicModules(session.get().getRole())) {
+            openLogin();
+            return;
+        }
         setContentView(R.layout.activity_home);
         String role = session.get().getRole();
         TextView roleLabel = findViewById(R.id.homeRole);
         TextView title = findViewById(R.id.homeTitle);
         TextView description = findViewById(R.id.homeDescription);
-        if ("ADMIN".equals(role)) {
+        if (RoleAccessPolicy.isAdmin(role)) {
             roleLabel.setText(R.string.home_role_admin);
             title.setText(R.string.home_admin_title);
             description.setText(R.string.home_admin_description);
@@ -40,14 +45,27 @@ public final class HomeActivity extends AppCompatActivity {
             title.setText(R.string.home_user_title);
             description.setText(R.string.home_user_description);
         }
-        findViewById(R.id.assignmentsButton).setOnClickListener(v ->
-                startActivity(new Intent(this, AsignaturasActivity.class)));
+        findViewById(R.id.assignmentsButton).setOnClickListener(v -> openAssignments());
         android.view.View usersButton = findViewById(R.id.usersManagementButton);
-        usersButton.setVisibility("ADMIN".equals(role) ? android.view.View.VISIBLE : android.view.View.GONE);
+        usersButton.setVisibility(RoleAccessPolicy.isAdmin(role)
+                ? android.view.View.VISIBLE : android.view.View.GONE);
         usersButton.setOnClickListener(v -> openUsersManagement());
         findViewById(R.id.reportsButton).setOnClickListener(v -> openReports());
         findViewById(R.id.sensorsButton).setOnClickListener(v -> openSensors());
         findViewById(R.id.logoutButton).setOnClickListener(v -> logout());
+    }
+
+    private void openAssignments() {
+        Optional<Session> current = sessionManager.getSession();
+        if (!current.isPresent()) {
+            openLogin();
+            return;
+        }
+        if (!RoleAccessPolicy.canViewAcademicModules(current.get().getRole())) {
+            openLogin();
+            return;
+        }
+        startActivity(new Intent(this, AsignaturasActivity.class));
     }
 
     private void openSensors() {
@@ -57,7 +75,7 @@ public final class HomeActivity extends AppCompatActivity {
             return;
         }
         String role = current.get().getRole();
-        if (!"ADMIN".equals(role) && !"USER".equals(role)) {
+        if (!RoleAccessPolicy.canViewAcademicModules(role)) {
             openLogin();
             return;
         }
@@ -71,7 +89,7 @@ public final class HomeActivity extends AppCompatActivity {
             return;
         }
         String role = current.get().getRole();
-        if (!"ADMIN".equals(role) && !"USER".equals(role)) {
+        if (!RoleAccessPolicy.canViewAcademicModules(role)) {
             openLogin();
             return;
         }
@@ -84,7 +102,7 @@ public final class HomeActivity extends AppCompatActivity {
             openLogin();
             return;
         }
-        if (!"ADMIN".equals(current.get().getRole())) {
+        if (!RoleAccessPolicy.isAdmin(current.get().getRole())) {
             android.widget.Toast.makeText(this, R.string.users_admin_only,
                     android.widget.Toast.LENGTH_LONG).show();
             return;

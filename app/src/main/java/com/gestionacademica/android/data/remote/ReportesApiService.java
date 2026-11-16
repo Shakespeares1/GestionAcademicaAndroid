@@ -38,4 +38,12 @@ public interface ReportesApiService {
             @Query("fechaHasta") String fechaHasta,
             @Query("page") Integer page,
             @Query("size") Integer size);
+
+    @GET("api/reportes/usuarios/busqueda")
+    Call<ReportePageDto<UsuarioDto>> buscarUsuarios(
+            @Query("nombre") String nombre,
+            @Query("username") String username,
+            @Query("email") String email,
+            @Query("page") Integer page,
+            @Query("size") Integer size);
 }

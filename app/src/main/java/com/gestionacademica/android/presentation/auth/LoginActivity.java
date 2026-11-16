@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.gestionacademica.android.R;
-import com.gestionacademica.android.data.dto.LoginResponse;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -40,7 +39,6 @@ public final class LoginActivity extends AppCompatActivity {
                 status.setText(state.getError().getMessage());
                 status.setVisibility(View.VISIBLE);
             } else if (state.getStatus() == AuthUiState.Status.SUCCESS) {
-                LoginResponse response = state.getValue();
                 startActivity(new Intent(this, com.gestionacademica.android.presentation.home.HomeActivity.class));
                 finish();
             }

@@ -6,9 +6,40 @@ public final class ApiErrorHandler {
     private ApiErrorHandler() {}
 
     public static ApiError fromResponse(Response<?> response) {
+        return errorForResponse(response, false);
+    }
+
+    public static ApiError fromResponse(Response<?> response, String path) {
+        boolean forgot = "/api/auth/forgot-password".equals(path);
+        boolean reset = "/api/auth/reset-password".equals(path);
+        if (forgot || reset) {
+            String message;
+            if (response.code() == 401) {
+                message = reset
+                        ? "No se pudo restablecer la contraseña. Solicita un nuevo enlace de recuperación."
+                        : "No se pudo solicitar la recuperación de contraseña. Intenta nuevamente.";
+            } else if (response.code() == 503) {
+                message = "El envío de correo no está disponible.";
+            } else {
+                return fromResponse(response);
+            }
+            return new ApiError(response.code(), message,
+                    parseRetryAfter(response.headers().get("Retry-After")));
+        }
+        return fromResponse(response);
+    }
+
+    public static ApiError fromLoginResponse(Response<?> response) {
+        return errorForResponse(response, true);
+    }
+
+    private static ApiError errorForResponse(Response<?> response, boolean loginRequest) {
         int status = response.code();
         Long retryAfter = parseRetryAfter(response.headers().get("Retry-After"));
-        return new ApiError(status, messageFor(status), retryAfter);
+        String message = loginRequest && status == 401
+                ? "No se pudo iniciar sesión. Verifica los datos de acceso y que la cuenta esté habilitada."
+                : messageFor(status);
+        return new ApiError(status, message, retryAfter);
     }
 
     public static ApiError fromNetworkFailure(Throwable exception) {
@@ -16,9 +47,15 @@ public final class ApiErrorHandler {
         while (cause.getCause() != null && cause.getCause() != cause) {
             cause = cause.getCause();
         }
-        String message = cause instanceof java.net.SocketTimeoutException
-                ? "La solicitud tardó demasiado. Intenta nuevamente."
-                : "No se pudo conectar con el servidor. Revisa tu conexión.";
+        String message;
+        if (cause instanceof com.gestionacademica.android.data.remote.LocalNetworkPermissionRequiredException
+                && cause.getMessage() != null) {
+            message = cause.getMessage();
+        } else if (cause instanceof java.net.SocketTimeoutException) {
+            message = "La solicitud tardó demasiado. Intenta nuevamente.";
+        } else {
+            message = "No se pudo conectar con el servidor. Revisa tu conexión.";
+        }
         return new ApiError(0, message, null);
     }
 

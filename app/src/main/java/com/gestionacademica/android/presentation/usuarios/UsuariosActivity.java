@@ -129,9 +129,11 @@ public final class UsuariosActivity extends AppCompatActivity {
             if (user == null || !matches(user, query)) continue;
             View card = inflater.inflate(R.layout.item_usuario, userList, false);
             TextView name = card.findViewById(R.id.userItemName);
+            TextView username = card.findViewById(R.id.userItemUsername);
             TextView email = card.findViewById(R.id.userItemEmail);
             TextView access = card.findViewById(R.id.userItemAccess);
             name.setText(safe(user.nombreCompleto));
+            username.setText(getString(R.string.users_username_display, safe(user.username)));
             email.setText(safe(user.email));
             access.setText(getString(R.string.users_access_summary,
                     safe(user.role), safe(user.accountStatus)));
@@ -153,6 +155,7 @@ public final class UsuariosActivity extends AppCompatActivity {
     private boolean matches(UsuarioDto user, String query) {
         if (query.isEmpty()) return true;
         return safe(user.nombreCompleto).toLowerCase(Locale.ROOT).contains(query)
+                || safe(user.username).toLowerCase(Locale.ROOT).contains(query)
                 || safe(user.email).toLowerCase(Locale.ROOT).contains(query);
     }
 
@@ -179,7 +182,7 @@ public final class UsuariosActivity extends AppCompatActivity {
         UsuarioDto user = state.getValue();
         if (user == null || user.id == null || user.id != requestedDetailId) return;
         String detail = getString(R.string.users_detail_text,
-                safe(user.id.toString()), safe(user.nombreCompleto), safe(user.email),
+                safe(user.id.toString()), safe(user.username), safe(user.nombreCompleto), safe(user.email),
                 safe(user.role), safe(user.accountStatus), safe(user.fechaCreacion));
         new AlertDialog.Builder(this)
                 .setTitle(R.string.users_details_title)

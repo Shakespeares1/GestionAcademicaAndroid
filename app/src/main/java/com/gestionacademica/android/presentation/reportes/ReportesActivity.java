@@ -44,6 +44,7 @@ public final class ReportesActivity extends AppCompatActivity {
     private View creditsFilters;
     private View userRoleFilters;
     private View dateFilters;
+    private View userSearchFilters;
     private TextInputEditText careerInput;
     private TextInputEditText semesterInput;
     private TextInputEditText areaInput;
@@ -55,6 +56,9 @@ public final class ReportesActivity extends AppCompatActivity {
     private MaterialAutoCompleteTextView statusDropdown;
     private TextInputEditText dateFromInput;
     private TextInputEditText dateToInput;
+    private TextInputEditText userNameSearchInput;
+    private TextInputEditText userUsernameSearchInput;
+    private TextInputEditText userEmailSearchInput;
     private TextInputLayout semesterLayout;
     private TextInputLayout creditsMinLayout;
     private TextInputLayout creditsMaxLayout;
@@ -106,6 +110,7 @@ public final class ReportesActivity extends AppCompatActivity {
         creditsFilters = findViewById(R.id.reportCreditsFilters);
         userRoleFilters = findViewById(R.id.reportUserRoleFilters);
         dateFilters = findViewById(R.id.reportDateFilters);
+        userSearchFilters = findViewById(R.id.reportUserSearchFilters);
         careerInput = findViewById(R.id.reportCareerInput);
         semesterInput = findViewById(R.id.reportSemesterInput);
         areaInput = findViewById(R.id.reportAreaInput);
@@ -117,6 +122,9 @@ public final class ReportesActivity extends AppCompatActivity {
         statusDropdown = findViewById(R.id.reportAccountStatusDropdown);
         dateFromInput = findViewById(R.id.reportDateFromInput);
         dateToInput = findViewById(R.id.reportDateToInput);
+        userNameSearchInput = findViewById(R.id.reportUserNameSearchInput);
+        userUsernameSearchInput = findViewById(R.id.reportUsernameSearchInput);
+        userEmailSearchInput = findViewById(R.id.reportUserEmailSearchInput);
         semesterLayout = findViewById(R.id.reportSemesterLayout);
         creditsMinLayout = findViewById(R.id.reportCreditsMinLayout);
         creditsMaxLayout = findViewById(R.id.reportCreditsMaxLayout);
@@ -144,6 +152,7 @@ public final class ReportesActivity extends AppCompatActivity {
         if (isAdmin) {
             addReport(ReportType.USERS_ROLE_STATUS, R.string.report_title_user_role);
             addReport(ReportType.USERS_REGISTRATION_DATE, R.string.report_title_user_date);
+            addReport(ReportType.USERS_SEARCH, R.string.report_title_user_search);
         }
         reportSelector.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, availableLabels));
@@ -185,6 +194,8 @@ public final class ReportesActivity extends AppCompatActivity {
                 ? View.VISIBLE : View.GONE);
         dateFilters.setVisibility(selectedType == ReportType.USERS_REGISTRATION_DATE
                 ? View.VISIBLE : View.GONE);
+        userSearchFilters.setVisibility(selectedType == ReportType.USERS_SEARCH
+                ? View.VISIBLE : View.GONE);
         description.setText(descriptionFor(selectedType));
         clearResults();
     }
@@ -199,6 +210,8 @@ public final class ReportesActivity extends AppCompatActivity {
                 return R.string.report_description_user_role;
             case USERS_REGISTRATION_DATE:
                 return R.string.report_description_user_date;
+            case USERS_SEARCH:
+                return R.string.report_description_user_search;
             default:
                 return R.string.reports_title;
         }
@@ -258,6 +271,14 @@ public final class ReportesActivity extends AppCompatActivity {
                 }
                 viewModel.usuariosPorFechaRegistro(from, to, page, size);
                 break;
+            case USERS_SEARCH:
+                if (!isAdmin) {
+                    showLocalError(R.string.report_users_admin_only);
+                    return;
+                }
+                viewModel.buscarUsuarios(optionalText(userNameSearchInput),
+                        optionalText(userUsernameSearchInput), optionalText(userEmailSearchInput), page, size);
+                break;
         }
     }
 
@@ -274,6 +295,9 @@ public final class ReportesActivity extends AppCompatActivity {
         statusDropdown.setText(any, false);
         dateFromInput.setText("");
         dateToInput.setText("");
+        userNameSearchInput.setText("");
+        userUsernameSearchInput.setText("");
+        userEmailSearchInput.setText("");
         pageInput.setText(getString(R.string.report_page_default));
         sizeInput.setText(getString(R.string.report_size_default));
         clearValidationErrors();
@@ -345,8 +369,14 @@ public final class ReportesActivity extends AppCompatActivity {
             } else if (item instanceof UsuarioDto && isUserReport()) {
                 UsuarioDto user = (UsuarioDto) item;
                 title.setText(safe(user.nombreCompleto));
-                summary.setText(getString(R.string.report_user_result, safe(user.nombreCompleto),
-                        safe(user.email), safe(user.role), safe(user.accountStatus), safe(user.fechaCreacion)));
+                if (selectedType == ReportType.USERS_SEARCH) {
+                    summary.setText(getString(R.string.report_user_search_result,
+                            safe(user.username), safe(user.email)));
+                } else {
+                    summary.setText(getString(R.string.report_user_result, safe(user.nombreCompleto),
+                            safe(user.username), safe(user.email), safe(user.role),
+                            safe(user.accountStatus), safe(user.fechaCreacion)));
+                }
             } else {
                 continue;
             }
@@ -361,7 +391,8 @@ public final class ReportesActivity extends AppCompatActivity {
 
     private boolean isUserReport() {
         return selectedType == ReportType.USERS_ROLE_STATUS
-                || selectedType == ReportType.USERS_REGISTRATION_DATE;
+                || selectedType == ReportType.USERS_REGISTRATION_DATE
+                || selectedType == ReportType.USERS_SEARCH;
     }
 
     private void clearResults() {

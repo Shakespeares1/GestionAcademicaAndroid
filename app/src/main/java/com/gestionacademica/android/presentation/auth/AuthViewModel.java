@@ -47,9 +47,9 @@ public final class AuthViewModel extends AndroidViewModel {
         });
     }
 
-    public void register(String nombreCompleto, String email, String password) {
+    public void register(String username, String nombreCompleto, String email, String password) {
         registrationState.setValue(AuthUiState.loading());
-        repository.register(new RegistroUsuarioRequest(nombreCompleto, email, password),
+        repository.register(new RegistroUsuarioRequest(username, nombreCompleto, email, password),
                 new AuthRepository.Callback<UsuarioDto>() {
                     @Override public void onSuccess(UsuarioDto value) {
                         registrationState.postValue(AuthUiState.success(value));

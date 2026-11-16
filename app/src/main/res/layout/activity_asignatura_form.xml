@@ -44,6 +44,7 @@
                 android:id="@+id/assignmentNameInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="120"
                 android:inputType="textCapSentences"
                 android:imeOptions="actionNext" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -59,6 +60,7 @@
                 android:id="@+id/assignmentFullNameInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="200"
                 android:inputType="textCapSentences"
                 android:imeOptions="actionNext" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -91,6 +93,7 @@
                 android:id="@+id/assignmentAreaInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="120"
                 android:inputType="textCapWords"
                 android:imeOptions="actionNext" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -106,6 +109,7 @@
                 android:id="@+id/assignmentCareerInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="120"
                 android:inputType="textCapWords"
                 android:imeOptions="actionNext" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -168,6 +172,7 @@
                 android:id="@+id/assignmentProfessorInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLength="160"
                 android:inputType="textCapWords"
                 android:imeOptions="actionDone" />
         </com.google.android.material.textfield.TextInputLayout>

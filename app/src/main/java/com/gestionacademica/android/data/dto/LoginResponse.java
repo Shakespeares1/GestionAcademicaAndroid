@@ -10,6 +10,7 @@ public final class LoginResponse {
 
     public static final class PublicUser {
         @SerializedName("id") public Long id;
+        @SerializedName("username") public String username;
         @SerializedName("nombreCompleto") public String nombreCompleto;
         @SerializedName("email") public String email;
         @SerializedName("role") public String role;

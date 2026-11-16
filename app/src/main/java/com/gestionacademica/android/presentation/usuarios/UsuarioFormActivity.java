@@ -16,6 +16,8 @@ import com.gestionacademica.android.data.dto.RegistroUsuarioRequest;
 import com.gestionacademica.android.data.dto.UsuarioDto;
 import com.gestionacademica.android.data.repository.SessionManager;
 import com.gestionacademica.android.domain.Session;
+import com.gestionacademica.android.utils.ApiError;
+import com.gestionacademica.android.utils.UsernameValidator;
 import com.gestionacademica.android.presentation.auth.LoginActivity;
 import com.gestionacademica.android.presentation.home.HomeActivity;
 import com.google.android.material.button.MaterialButton;
@@ -25,10 +27,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public final class UsuarioFormActivity extends AppCompatActivity {
+    private TextInputLayout usernameLayout;
     private TextInputLayout nameLayout;
     private TextInputLayout emailLayout;
     private TextInputLayout passwordLayout;
     private TextInputLayout confirmationLayout;
+    private TextInputEditText usernameInput;
     private TextInputEditText nameInput;
     private TextInputEditText emailInput;
     private TextInputEditText passwordInput;
@@ -86,10 +90,12 @@ public final class UsuarioFormActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
+        usernameLayout = findViewById(R.id.userUsernameLayout);
         nameLayout = findViewById(R.id.userNameLayout);
         emailLayout = findViewById(R.id.userEmailLayout);
         passwordLayout = findViewById(R.id.userPasswordLayout);
         confirmationLayout = findViewById(R.id.userConfirmPasswordLayout);
+        usernameInput = findViewById(R.id.userUsernameInput);
         nameInput = findViewById(R.id.userNameInput);
         emailInput = findViewById(R.id.userEmailInput);
         passwordInput = findViewById(R.id.userPasswordInput);
@@ -122,6 +128,7 @@ public final class UsuarioFormActivity extends AppCompatActivity {
                 retryButton.setVisibility(View.VISIBLE);
                 return;
             }
+            usernameInput.setText(user.username == null ? "" : user.username);
             nameInput.setText(user.nombreCompleto == null ? "" : user.nombreCompleto);
             emailInput.setText(user.email == null ? "" : user.email);
             detailLoaded = true;
@@ -134,9 +141,17 @@ public final class UsuarioFormActivity extends AppCompatActivity {
     private void submit() {
         clearErrors();
         if (!detailLoaded) return;
+        String username = UsernameValidator.normalize(value(usernameInput));
         String name = value(nameInput).trim();
         String email = value(emailInput).trim();
         boolean valid = true;
+        if (username.isEmpty()) {
+            usernameLayout.setError(getString(R.string.username_required));
+            valid = false;
+        } else if (!UsernameValidator.isValid(username)) {
+            usernameLayout.setError(getString(R.string.username_invalid));
+            valid = false;
+        }
         if (TextUtils.isEmpty(name)) {
             nameLayout.setError(getString(R.string.users_name_required));
             valid = false;
@@ -178,9 +193,9 @@ public final class UsuarioFormActivity extends AppCompatActivity {
 
         saveButton.setEnabled(false);
         if (editing) {
-            viewModel.update(userId, new ActualizarUsuarioRequest(name, email));
+            viewModel.update(userId, new ActualizarUsuarioRequest(username, name, email));
         } else {
-            viewModel.register(new RegistroUsuarioRequest(name, email, password));
+            viewModel.register(new RegistroUsuarioRequest(username, name, email, password));
         }
     }
 
@@ -190,7 +205,7 @@ public final class UsuarioFormActivity extends AppCompatActivity {
         progress.setVisibility(loading ? View.VISIBLE : View.GONE);
         saveButton.setEnabled(!loading && detailLoaded);
         if (state.getStatus() == UsuarioUiState.Status.ERROR) {
-            status.setText(state.getError().getMessage());
+            status.setText(userWriteErrorMessage(state.getError()));
             status.setVisibility(View.VISIBLE);
         } else if (state.getStatus() == UsuarioUiState.Status.SUCCESS) {
             Toast.makeText(this, editing
@@ -201,12 +216,20 @@ public final class UsuarioFormActivity extends AppCompatActivity {
     }
 
     private void clearErrors() {
+        usernameLayout.setError(null);
         nameLayout.setError(null);
         emailLayout.setError(null);
         passwordLayout.setError(null);
         confirmationLayout.setError(null);
         status.setText("");
         status.setVisibility(View.GONE);
+    }
+
+    private String userWriteErrorMessage(ApiError error) {
+        if (error == null) return getString(R.string.username_server_rejected);
+        if (error.getStatusCode() == 409) return getString(R.string.username_duplicate);
+        if (error.getStatusCode() == 400) return getString(R.string.username_server_rejected);
+        return error.getMessage();
     }
 
     private static String value(TextInputEditText input) {

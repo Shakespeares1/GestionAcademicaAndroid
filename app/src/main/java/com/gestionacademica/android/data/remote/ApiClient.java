@@ -20,12 +20,13 @@ public final class ApiClient {
         String baseUrl = BuildConfig.API_BASE_URL;
         validateBaseUrl(baseUrl);
         SessionManager sessionManager = new SessionManager(context.getApplicationContext());
-        OkHttpClient httpClient = new OkHttpClient.Builder()
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder()
+                .addInterceptor(new LocalNetworkPermissionInterceptor(context))
                 .addInterceptor(new BearerTokenInterceptor(sessionManager))
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build();
+                .writeTimeout(30, TimeUnit.SECONDS);
+        OkHttpClient httpClient = httpClientBuilder.build();
         Gson gson = new GsonBuilder().create();
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
